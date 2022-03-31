@@ -1,0 +1,290 @@
+<div class="ProductItem {% if use_horizontal %}ProductItem--horizontal{% endif %}">
+  <div class="ProductItem__Wrapper">
+    {%- comment -%}
+    We are using LazySizes to efficiently choose the most appropriate image in the set. However, because internally LazySizes uses srcset, we need to make
+    sure that the image sizes we offer is not larger than the max size uploaded by the merchants.
+    {%- endcomment -%}
+
+    {%- if settings.product_image_size == 'natural' or use_horizontal -%}
+      {%- assign use_natural_size = true -%}
+    {%- else -%}
+      {%- assign use_natural_size = false -%}
+    {%- endif -%}
+
+    {%- if settings.product_show_secondary_image and product.images[1] != blank and use_horizontal != true -%}
+      {%- assign has_alternate_image = true -%}
+    {%- else -%}
+      {%- assign has_alternate_image = false -%}
+    {%- endif -%}
+
+    <a href="{{ product.url | within: collection }}" class="ProductItem__ImageWrapper {% if has_alternate_image %}ProductItem__ImageWrapper--withAlternateImage{% endif %}">
+      {%- if use_horizontal -%}
+        {%- assign max_width = 125 -%}
+      {%- else -%}
+        {%- assign max_width = product.featured_image.width -%}
+      {%- endif -%}
+
+      <div class="AspectRatio AspectRatio--{% if use_natural_size %}withFallback{% else %}{{ settings.product_image_size }}{% endif %}" style="max-width: {{ max_width }}px; {% if use_natural_size %}padding-bottom: {{ 100.0 | divided_by: product.featured_image.aspect_ratio }}%;{% endif %} --aspect-ratio: {{ product.featured_image.aspect_ratio }}">
+        {%- comment -%}
+        IMPLEMENTATION NOTE: The alternate image (not visible by default) should be the first in the DOM, as the spinner (Image__Loader element) is
+        displayed based on the immediately previously shown image.
+        {%- endcomment -%}
+
+        {%- if has_alternate_image -%}
+          {%- include 'image-size', sizes: '200,300,400,600,800,900,1000,1200', image: product.images[1] -%}
+          {%- assign image_url = product.images[1] | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+          <img class="ProductItem__Image ProductItem__Image--alternate Image--lazyLoad Image--fadeIn" data-src="{{ image_url }}" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ product.images[1].alt | escape }}" data-image-id="{{ product.images[1].id }}">
+        {%- endif -%}
+
+        {%- include 'image-size', sizes: '200,400,600,700,800,900,1000,1200', image: product.featured_image -%}
+        {%- assign image_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+        <img class="ProductItem__Image Image--lazyLoad Image--fadeIn" data-src="{{ image_url }}" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ product.featured_image.alt | escape }}" data-image-id="{{ product.featured_image.id }}">
+
+        {%- for image in product.images -%}
+          {% if forloop.index > 2 %}
+            {%- assign image_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img class="ProductItem__Image ProductItem__Image--extra Image--lazyLoad Image--fadeIn" data-index="{{forloop.index}}" data-src="{{ image_url }}" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ image.alt | escape }}" data-image-id="{{ image.id }}">
+          {% endif %}
+        {%- endfor -%}
+
+        <span class="Image__Loader"></span>
+
+        <noscript>
+          <img class="ProductItem__Image ProductItem__Image--alternate" src="{{ product.images[1] | img_url: '600x' }}" alt="{{ product.images[1].alt | escape }}">
+          <img class="ProductItem__Image" src="{{ product.featured_image | img_url: '600x' }}" alt="{{ product.featured_image.alt | escape }}">
+        </noscript>
+      </div>
+
+      <button type="button" class="trigger-quickview">Quick View</button>
+    </a>
+
+    {%- if show_labels and false -%}
+      {%- capture product_labels -%}
+        {%- for tag in product.tags -%}
+          {%- if tag contains '__label' -%}
+            <span class="ProductItem__Label Heading Text--subdued">{{ tag | split: '__label:' | last }}</span>
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if product.available -%}
+          {%- if product.compare_at_price > product.price -%}
+            <span class="ProductItem__Label Heading Text--subdued">{{ 'product.labels.on_sale' | t }}</span>
+          {%- endif -%}
+        {%- else -%}
+          <span class="ProductItem__Label Heading Text--subdued">{{ 'product.labels.sold_out' | t }}</span>
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- if product_labels != blank -%}
+        <div class="ProductItem__LabelList">
+          {{ product_labels }}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if show_product_info -%}
+      {% capture product_tags %}
+        {%- if product.available -%}
+          {%- if product.tags contains 'one-left' and collection != blank and collection.handle != 'one-of-a-kind' -%}
+            <p class="ProductItem__Tag OneOfAKind h4">{% include 'icon-logomark-migol' %} One of a Kind</p>
+          {%- elsif product.tags contains 'na' -%}
+            <p class="ProductItem__Tag NewArrival h4"><img src="{{ 'logo-mark-mi-golondrina.svg' | asset_url }}" width="14" alt=""> New Arrival</p>
+          {%- elsif product.tags contains 'preorder' -%}
+            <p class="ProductItem__Tag Preorder h4"><img src="{{ 'icon-lock.svg' | asset_url }}" width="14" alt="">  Preorder</p>
+          {%- elsif product.compare_at_price > product.price -%}
+            <p class="ProductItem__Tag OnSale h4">On Sale</p>
+          {%- endif -%}
+        {%- else -%}
+          <p class="ProductItem__Tag SoldOut h4">Sold Out</p>
+        {%- endif -%}
+      {% endcapture %}
+      {% if product_tags == blank %}
+        {% assign has_tags = false %}
+      {% else %}
+        {% assign has_tags = true %}
+      {% endif %}
+      <div class="ProductItem__Info {% if has_tags %}ProductItem__HasTag{% endif %} {% unless use_horizontal %}ProductItem__Info--{{ settings.product_info_alignment }}{% endunless %}">
+        {{ product_tags }}
+
+        {%- if show_vendor -%}
+          <p class="ProductItem__Vendor Heading h4">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        <h2 class="ProductItem__Title Heading h3">
+          <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+      
+        </h2>
+
+        
+        {%- if show_color_swatch -%}
+          {%- assign color_swatch_list = '' -%}
+
+          {%- capture color_swatch -%}
+            {%- assign color_label = 'color,colour,couleur,colore,farbe,색,色,färg,farve' | split: ',' -%}
+            {%- capture color_name -%}{{ section.id }}-{{ product.id }}-{% increment color_name %}{%- endcapture -%}
+
+            {%- for option in product.options_with_values -%}
+              {%- assign downcased_option = option.name | downcase -%}
+
+              {%- if color_label contains downcased_option -%}
+                {%- assign variant_option = 'option' | append: forloop.index -%}
+
+                {%- for value in option.values -%}
+                  {%- assign downcased_value = value | downcase -%}
+                  {%- capture color_id -%}{{ section.id }}-{{ product.id }}-{% increment color_index %}{%- endcapture -%}
+
+                  {%- for variant in product.variants -%}
+                    {%- if variant[variant_option] == value -%}
+                      {%- assign variant_for_value = variant -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  <div class="ProductItem__ColorSwatchItem">
+                    {%- if variant_for_value.image -%}
+                      {%- include 'image-size', sizes: '200,400,600,700,800,900,1000,1200', image: variant_for_value.image -%}
+                      {%- assign variant_image_url = variant_for_value.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                    {%- endif -%}
+
+                    {%- assign color_swatch_name = value | handle | append: '.png' -%}
+                    {%- assign color_swatch_image = images[color_swatch_name] -%}
+
+                    <input class="ColorSwatch__Radio" type="radio" name="{{ color_name }}" id="{{ color_id }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked="checked"{% endif %} data-variant-url="{{ variant_for_value.url }}{% if variant_for_value.image %}#Image{{ variant_for_value.image.id }}{% endif %}" {% if variant_for_value.image %}data-image-id="{{ variant_for_value.image.id }}" data-image-url="{{ variant_image_url }}" data-image-widths="[{{ supported_sizes }}]" data-image-aspect-ratio="{{ variant_for_value.image.aspect_ratio }}"{% endif %} aria-hidden="true">
+                    <label class="ColorSwatch ColorSwatch--small" for="{{ color_id }}" style="background-color: {{ value | replace: ' ', '' | downcase }}; {% if color_swatch_image != blank %}background-image: url({{ color_swatch_image | img_url: '64x64' }}){% endif %}" title="{{ value | escape }}" data-tooltip="{{ value | escape }}"></label>
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+
+          {%- if color_swatch != blank -%}
+            {%- capture color_swatch_list -%}
+              <div class="ProductItem__ColorSwatchList">
+                {{- color_swatch -}}
+              </div>
+            {%- endcapture -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if show_price_on_hover == nil -%}
+          {%- assign show_price_on_hover = settings.product_show_price_on_hover -%}
+        {%- endif -%}
+
+        {%- if show_price_on_hover and color_swatch_list != blank -%}
+          {{- color_swatch_list -}}
+        {%- endif -%}
+
+        {%- if product.template_suffix != 'coming-soon' -%}
+          <div class="ProductItem__PriceList {% if show_price_on_hover %}ProductItem__PriceList--showOnHover{% endif %} Heading">
+            {%- if product.compare_at_price > product.price -%}
+              <span class="ProductItem__Price Price Price--highlight" data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price | money_without_trailing_zeros }}</span></span>
+              <span class="ProductItem__Price Price Price--compareAt" data-money-convertible><span class="bold-compare-at-money" data-product-id="{{ product.id }}">{{ product.compare_at_price | money_without_trailing_zeros }}</span></span>
+            {%- elsif collection.handle contains 'custom-' -%}
+              {%- capture formatted_min_price -%}<span data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price_min | money_without_trailing_zeros }}</span></span>{%- endcapture -%}
+              {%- capture formatted_max_price -%}<span data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price_max | money_without_trailing_zeros }}</span></span>{%- endcapture -%}
+              <span class="ProductItem__Price Price">{{ 'collection.product.starting_at_price_html' | t: min_price: formatted_min_price, max_price: formatted_max_price }}</span>
+            {%- elsif product.price_varies -%}
+              {%- capture formatted_min_price -%}<span data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price_min | money_without_trailing_zeros }}</span></span>{%- endcapture -%}
+              {%- capture formatted_max_price -%}<span data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price_max | money_without_trailing_zeros }}</span></span>{%- endcapture -%}
+              <span class="ProductItem__Price Price">{{ 'collection.product.from_price_html' | t: min_price: formatted_min_price, max_price: formatted_max_price }}</span>
+            {%- else -%}
+              <span class="ProductItem__Price Price" data-money-convertible><span class="money" data-product-id="{{ product.id }}">{{ product.price | money_without_trailing_zeros }}</span></span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if show_price_on_hover == false and color_swatch_list != blank -%}
+          {{- color_swatch_list -}}
+        {%- endif -%}
+
+        {%- assign available_variants = '|' -%}
+        {%- for variant_item in product.variants -%}
+          {%- if variant_item.available -%}
+            {%- assign available_variants = available_variants | append: 'size-' | append: variant_item.title | append: '|' | downcase | replace: ' ','-' -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <!--variants {{ available_variants }} -->
+
+        {%- assign downcase_type = product.type | downcase -%}
+        {% comment %}WARNING: Any changes in the below logic must also be duplicated in assets/algolia_helpers.js.liquid{% endcomment %}
+
+        {% assign type_lists = 'dress,blouse,shirt,adult t-shirt,top,childrens,kids t-shirt,plus size,skirt,baby,sweatshirt - adult' | split: ',' %}
+        {%- if type_lists contains downcase_type -%}
+        <div class="ProductItem__SizeList">
+          {%- if product.tags contains 'sizes-pt-one-size' -%}
+            <span class="size-one-size">ONE SIZE</span>
+            {% assign displayed = 'sizes-pt-one-size' | split: ':' %}
+          {%- elsif downcase_type == 'baby' -%}
+            <span class="size-6m {% unless product.tags contains 'sizes-pt-6m' %} disabled{% endunless %}">6M</span>
+            <span class="size-9m {% unless product.tags contains 'sizes-pt-9m' %} disabled{% endunless %}">9M</span>
+            <span class="size-12m {% unless product.tags contains 'sizes-pt-12m' %} disabled{% endunless %}">12M</span>
+            <span class="size-18m {% unless product.tags contains 'sizes-pt-18m' %} disabled{% endunless %}">18M</span>
+            {% assign displayed = 'sizes-pt-6m:sizes-pt-9m:sizes-pt-12m:sizes-pt-18m' | split: ':' %}
+          {%- elsif downcase_type == 'childrens' and product.tags contains 'bloomers' or product.tags contains 'kids-subtype-pt-bloomer' or product.tags contains 'kids-subtype-pt-little-boys' -%}
+            <span class="size-1t {% unless product.tags contains 'sizes-pt-1t' %} disabled{% endunless %}">1T</span>
+            <span class="size-2t {% unless product.tags contains 'sizes-pt-2t' %} disabled{% endunless %}">2T</span>
+            <span class="size-3t {% unless product.tags contains 'sizes-pt-3t' %} disabled{% endunless %}">3T</span>
+            {% assign displayed = 'sizes-pt-1t:sizes-pt-2t:sizes-pt-3t' | split: ':' %}
+          {%- elsif downcase_type == 'childrens' and product.tags contains 'girasol' or product.tags contains 'kids-subtype-pt-girasol' or product.tags contains 'kids-subtype-pt-carmen' or product.tags contains 'kids-luisa-dress' -%}
+            <span class="size-1t {% unless product.tags contains 'sizes-pt-1t' %} disabled{% endunless %}">1T</span>
+            <span class="size-2t {% unless product.tags contains 'sizes-pt-2t' %} disabled{% endunless %}">2T</span>
+            <span class="size-3t {% unless product.tags contains 'sizes-pt-3t' %} disabled{% endunless %}">3T</span>
+            <span class="size-4t {% unless product.tags contains 'sizes-pt-4t' %} disabled{% endunless %}">4T</span>
+            {% assign displayed = 'sizes-pt-1t:sizes-pt-2t:sizes-pt-3t:sizes-pt-4t' | split: ':' %}
+          {%- elsif downcase_type == 'childrens' and product.tags contains 'florecita' or product.tags contains 'kids-subtype-pt-florecita' -%}
+            <span class="size-4t {% unless product.tags contains 'sizes-pt-4t' %} disabled{% endunless %}">4T</span>
+            <span class="size-6y {% unless product.tags contains 'sizes-pt-6y' %} disabled{% endunless %}">6Y</span>
+            <span class="size-8y {% unless product.tags contains 'sizes-pt-8y' %} disabled{% endunless %}">8Y</span>
+            <span class="size-10y {% unless product.tags contains 'sizes-pt-10y' %} disabled{% endunless %}">10Y</span>
+            <span class="size-12y {% unless product.tags contains 'sizes-pt-12y' %} disabled{% endunless %}">12Y</span>
+            {% assign displayed = 'sizes-pt-4t:sizes-pt-6y:sizes-pt-8y:sizes-pt-10y:sizes-pt-12y' | split: ':' %}
+          {%- elsif downcase_type == 'childrens' -%}
+            <span class="size-12-18m {% unless product.tags contains 'sizes-pt-12-18m' %} disabled{% endunless %}">12-18M</span>
+            <span class="size-18-24m {% unless product.tags contains 'sizes-pt-18-24m' %} disabled{% endunless %}">18-24M</span>
+            <span class="size-2t {% unless product.tags contains 'sizes-pt-2t' %} disabled{% endunless %}">2T</span>
+            <span class="size-4t {% unless product.tags contains 'sizes-pt-4t' %} disabled{% endunless %}">4T</span>
+            <span class="size-6y {% unless product.tags contains 'sizes-pt-6y' %} disabled{% endunless %}">6Y</span>
+            <span class="size-8y {% unless product.tags contains 'sizes-pt-8y' %} disabled{% endunless %}">8Y</span>
+            <span class="size-10y {% unless product.tags contains 'sizes-pt-10y' %} disabled{% endunless %}">10Y</span>
+            <span class="size-12y {% unless product.tags contains 'sizes-pt-12y' %} disabled{% endunless %}">12Y</span>
+            {% assign displayed = 'sizes-pt-12-18m:sizes-pt-18-24m:sizes-pt-2t:sizes-pt-4t:sizes-pt-6y:sizes-pt-8y:sizes-pt-10y:sizes-pt-12y' | split: ':' %}
+          {%- elsif downcase_type == 'kids t-shirt' -%}
+            <span class="size-4t {% unless product.tags contains 'sizes-pt-4t' %} disabled{% endunless %}">4T</span>
+            <span class="size-6y {% unless product.tags contains 'sizes-pt-6y' %} disabled{% endunless %}">6Y</span>
+            <span class="size-8y {% unless product.tags contains 'sizes-pt-8y' %} disabled{% endunless %}">8Y</span>
+            <span class="size-10y {% unless product.tags contains 'sizes-pt-10y' %} disabled{% endunless %}">10Y</span>
+            <span class="size-12y {% unless product.tags contains 'sizes-pt-12y' %} disabled{% endunless %}">12Y</span>
+            {% assign displayed = 'sizes-pt-4t:sizes-pt-6y:sizes-pt-8y:sizes-pt-10y:sizes-pt-12y' | split: ':' %}
+          {%- elsif downcase_type contains 'plus size' -%}
+            <span class="size-1x {% unless product.tags contains 'sizes-pt-1x' %} disabled{% endunless %}">1X</span>
+            <span class="size-2x {% unless product.tags contains 'sizes-pt-2x' %} disabled{% endunless %}">2X</span>
+            {% assign displayed = 'sizes-pt-1x:sizes-pt-2x' | split: ':' %}
+          {%- else -%}
+            <span class="size-xs {% unless product.tags contains 'sizes-pt-extra-small' %} disabled{% endunless %}">XS</span>
+            <span class="size-s {% unless product.tags contains 'sizes-pt-small' %} disabled{% endunless %}">S</span>
+            <span class="size-m {% unless product.tags contains 'sizes-pt-medium' %} disabled{% endunless %}">M</span>
+            <span class="size-l {% unless product.tags contains 'sizes-pt-large' %} disabled{% endunless %}">L</span>
+            <span class="size-xl {% unless product.tags contains 'sizes-pt-extra-large' %} disabled{% endunless %}">XL</span>
+            {% assign displayed = 'sizes-pt-extra-small:sizes-pt-small:sizes-pt-medium:sizes-pt-large:sizes-pt-extra-large' | split: ':' %}
+          {%- endif -%}
+          {%- for tag in product.tags -%}
+            {%- if tag contains 'sizes-pt-' -%}
+              {%- unless displayed contains tag -%}
+                {%- assign display_value = tag | replace: 'sizes-pt-','' -%}
+                <span class="size-{{ display_value }}">{{ display_value | upcase }}</span>
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if use_horizontal -%}
+    <a href="{{ associated_product.url }}" class="ProductItem__ViewButton Button Button--secondary hidden-pocket">{{ 'collection.product.view_product' | t }}</a>
+  {%- endif -%}
+</div>

@@ -1,0 +1,97 @@
+{%- capture flickity_config -%}
+{
+  "wrapAround": true,
+  "pageDots": false,
+  "setGallerySize": false,
+  "prevNextButtons": true,
+  "arrowShape": {"x0": 20, "x1": 60, "y1": 40, "x2": 60, "y2": 35, "x3": 25}
+}
+{%- endcapture -%}
+
+<section class="Section Section--spacingNormal Section__ImageGrid" data-section-id="{{ section.id }}">
+  {%- if block.settings.subheading != blank or block.settings.title != blank -%}
+    <section class="SectionHeader SectionHeader--center">
+      <div class="Container">
+        {%- if block.settings.subheading != blank -%}
+          <h3 class="SectionHeader__SubHeading Heading h3">{{ block.settings.subheading | escape }}</h3>
+        {%- endif -%}
+
+        {%- if block.settings.title != blank -%}
+          <h2 class="SectionHeader__Heading Heading h2">{{ block.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if block.settings.hashtag != blank -%}
+          <h3 class="SectionHeader__SubHeading Heading h3">{{ block.settings.hashtag | escape }}</h3>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+    <div class="ImageGrid Grid">
+        {%- assign block_image = block.settings.image_1 -%}
+        {%- assign block_link = block.settings.link_1 -%}
+        {%- assign block_caption = block.settings.caption_1 -%}
+        <div class="Grid__Cell 1/2--phone 1/4--tablet-and-up">
+            <a href="{{block_link}}" rel="nofollow noopener" target="_blank" class="ImageGrid__Link">
+                <div class="ImageGrid__Image Image--lazyLoad Image--zoomOut" data-expand="10" data-bg="{{block_image | img_url: '400x' }}" aria-label="Open on Instagram">
+                    {%- if block_caption -%}
+                        <div class="ImageGrid__Overlay">
+                            <p class="ImageGrid__Caption">{{block_caption}}</p>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+
+        {%- assign block_image = block.settings.image_2 -%}
+        {%- assign block_link = block.settings.link_2 -%}
+        {%- assign block_caption = block.settings.caption_2 -%}
+        <div class="Grid__Cell 1/2--phone 1/4--tablet-and-up">
+            <a href="{{block_link}}" rel="nofollow noopener" target="_blank" class="ImageGrid__Link">
+                <div class="ImageGrid__Image Image--lazyLoad Image--zoomOut" data-expand="10" data-bg="{{block_image | img_url: '400x' }}" aria-label="Open on Instagram">
+                    {%- if block_caption -%}
+                        <div class="ImageGrid__Overlay">
+                            <p class="ImageGrid__Caption">{{block_caption}}</p>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+
+        {%- assign block_image = block.settings.image_3 -%}
+        {%- assign block_link = block.settings.link_3 -%}
+        {%- assign block_caption = block.settings.caption_3 -%}
+        <div class="Grid__Cell 1/2--phone 1/4--tablet-and-up">
+            <a href="{{block_link}}" rel="nofollow noopener" target="_blank" class="ImageGrid__Link">
+                <div class="ImageGrid__Image Image--lazyLoad Image--zoomOut" data-expand="10" data-bg="{{block_image | img_url: '400x' }}" aria-label="Open on Instagram">
+                    {%- if block_caption -%}
+                        <div class="ImageGrid__Overlay">
+                            <p class="ImageGrid__Caption">{{block_caption}}</p>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+
+        {%- assign block_image = block.settings.image_4 -%}
+        {%- assign block_link = block.settings.link_4 -%}
+        {%- assign block_caption = block.settings.caption_4 -%}
+        <div class="Grid__Cell 1/2--phone 1/4--tablet-and-up">
+            <a href="{{block_link}}" rel="nofollow noopener" target="_blank" class="ImageGrid__Link">
+                <div class="ImageGrid__Image Image--lazyLoad Image--zoomOut" data-expand="10" data-bg="{{block_image | img_url: '400x' }}" aria-label="Open on Instagram">
+                    {%- if block_caption -%}
+                        <div class="ImageGrid__Overlay">
+                            <p class="ImageGrid__Caption">{{block_caption}}</p>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+    </div>
+  
+  {%- if block.settings.button_text != blank -%}
+    <div class="SectionFooter">
+      <a href="{{ block.settings.button_url }}" class="Button Button--primary" target="_blank" rel="noopener">{{ block.settings.button_text | escape }}</a>
+    </div>
+  {%- endif -%}
+</section>

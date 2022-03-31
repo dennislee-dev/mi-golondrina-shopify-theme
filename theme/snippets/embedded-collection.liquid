@@ -1,0 +1,34 @@
+    {%- paginate collection.products by section.settings.grid_items_per_page -%}
+      <div class="ProductListWrapper">
+        <div class="ProductList ProductList--grid {% if paginate.pages > 1 %}ProductList--removeMargin{% endif %} Grid" data-mobile-count="{{ mobile_items_per_row }}" data-desktop-count="{{ desktop_items_per_row }}">
+          {%- for product in collection.products -%}
+{%comment%}<script type='application/json' class='bold-product-json'>{{ product | json }}</script>{%endcomment%}
+            {%- if product.available or collection.handle contains 'custom' -%}{%- comment -%}Hide out of stock products{%- endcomment -%}
+              {%- if has_size_tag -%}
+                {%- assign available_variants = '|' -%}
+                {%- for variant_item in product.variants -%}
+                  {%- if variant_item.available -%}
+                    {%- assign available_variants = available_variants | append: 'size-' | append: variant_item.title | append: '|' | downcase -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if available_variants contains size_tag -%}
+                  <div class="Grid__Cell 1/{{ mobile_items_per_row }}--phone 1/{{ tablet_items_per_row }}--tablet-and-up 1/{{ desktop_items_per_row }}--{% if section.settings.filter_position == 'drawer' %}lap-and-up{% else %}widescreen{% endif %}">
+                    {%- include 'product-item', show_product_info: true, show_vendor: section.settings.show_vendor, show_color_swatch: section.settings.show_color_swatch, show_labels: false -%}
+                  </div>
+                {%- else -%}
+                  <!--hidden product size: {{ product.title }} -->
+                {%- endif -%}
+              {%- else -%}
+                <div class="Grid__Cell 1/{{ mobile_items_per_row }}--phone 1/{{ tablet_items_per_row }}--tablet-and-up 1/{{ desktop_items_per_row }}--{% if section.settings.filter_position == 'drawer' %}lap-and-up{% else %}widescreen{% endif %}">
+                  {%- include 'product-item', show_product_info: true, show_vendor: section.settings.show_vendor, show_color_swatch: section.settings.show_color_swatch, show_labels: false -%}
+                </div>
+              {%- endif -%}
+            {%- else -%}
+              <!--hidden product: {{ product.title }} -->
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- include 'pagination' -%}
+    {%- endpaginate -%}

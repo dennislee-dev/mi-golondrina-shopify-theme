@@ -1,0 +1,65 @@
+<section id="block-{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- capture mobile_size -%}750x{% if block.settings.image.height >= 960 %}960{% else %}{{ block.settings.image.height }}{% endif %}{%- endcapture -%}
+
+  <div class="FlexboxIeFix">
+    <div class="ImageHero {% if block.settings.fullwidth == true %}ImageHero--fullwidth {% endif %}{% if block.settings.section_size != 'normal' %}ImageHero--{{ block.settings.section_size }}{% endif %}" {% if block.settings.image %}style="background: url({{ block.settings.image | img_url: '1x1' }})"{% endif %}>
+      <div class="ImageHero__ImageWrapper">
+        <div class="ImageHero__Image {% if block.settings.overlay_opacity > 0 %}ImageHero__ImageWrapper--hasOverlay{% endif %} Image--lazyLoad Image--zoomOut"
+             data-optimumx="1.4"
+             data-expand="-150"
+             {% if block.settings.image %}data-bgset="{{ block.settings.image | img_url: mobile_size }} 750w, {{ block.settings.image | img_url: '1000x' }} 1000w, {{ block.settings.image | img_url: '1500x' }} 1500w"{% endif %}>
+        </div>
+
+        <noscript>
+          <div class="ImageHero__Image" style="background-image: url({{ block.settings.image | img_url: '1000x' }})"></div>
+        </noscript>
+
+        {%- unless block.settings.image != blank -%}
+          <div class="PlaceholderBackground PlaceholderBackground--Dark">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'PlaceholderBackground__Svg' }}
+          </div>
+        {%- endunless -%}
+      </div>
+
+      {%- if block.settings.subheading != blank or block.settings.title != blank or block.settings.content != blank -%}
+        <div class="ImageHero__ContentOverlay ImageHero__ContentAlign{{ block.settings.text_position }} ImageHero__ContentAlign{{ block.settings.text_vertical_position }}">
+          {%- if block.settings.subheading != blank or block.settings.title != blank -%}
+            <header class="SectionHeader">
+              {%- if block.settings.subheading != blank -%}
+                <h3 class="SectionHeader__SubHeading Heading h3">{{ block.settings.subheading | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.title != blank -%}
+                <h2 class="SectionHeader__Heading Heading h2">{{ block.settings.title | replace: '<br>', '~!~' | escape | replace: '~!~', '<br>' }}</h2>
+              {%- endif -%}
+
+              {%- if block.settings.content != blank -%}
+                <div class="SectionHeader__Description">
+                  {{ block.settings.content }}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.link_text != blank and block.settings.link_url != blank -%}
+                <div class="SectionHeader__Link">
+                  <a href="{{ block.settings.link_url }}" class="h3">{{ block.settings.link_text }}</a>
+                </div>
+              {%- endif -%}
+            </header>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #block-{{ block.id }},
+  #block-{{ block.id }} .Heading {
+    color: {{ block.settings.text_color }};
+  }
+
+  #block-{{ block.id }} .ImageHero__ImageWrapper--hasOverlay::before {
+    {%- assign overlay_opacity = block.settings.overlay_opacity | divided_by: 100.0 -%}
+    background-color: {{ block.settings.overlay_color | color_modify: 'alpha', overlay_opacity }};
+  }
+</style>

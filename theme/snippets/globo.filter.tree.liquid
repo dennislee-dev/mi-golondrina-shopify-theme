@@ -1,0 +1,96 @@
+{% raw %}
+<span onclick="globofilter.toggleCanvas()" class="gf-close-canvas"></span>
+<div class="gf-filter-contents">
+  {% if has_filter %}
+  <div class="gf-selection-wrapper">
+    <div class="gf-block-title">
+      <h3><span>Filter By</span></h3>
+      <a href="javascript:;" onclick="clearAllFilter()" class="gf-refine-toggle">Clear All</a>
+    </div>
+    <div class="gf-block-content globo-selected-items">
+      {% for filter in filters %}
+        {% if filter.is_selected %}
+          {% if filter.style == 'Slider' %}
+            <div class="selected-item gf-option-label">
+              <a href="javascript:" onclick="removeFilter({{filter.id}})">
+                <span class="selected-item">
+                  {{filter.label}}:
+                  <strong>
+                    {% if filter.attribute == 'Price' %}
+                      <span class="money">{{filter.values.min | times: 100 | money}}</span> - <span class="money">{{filter.values.max | times: 100 | money}}</span>
+                    {% else %}
+                      {{filter.values.min}} % - {{filter.values.max}} %
+                    {% endif %}
+                  </strong>
+                </span>
+                <span class="gf-clear"></span>
+              </a>
+            </div>
+          {% else %}
+            {% for value in filter.values %}
+              {% if value.selected %}
+                <div class="selected-item gf-option-label">
+                  <a href="javascript:" onclick="removeFilterValue({{filter.id}},'{{value.value | replace:"'", "\'" | escape_once}}')">
+                    <span class="selected-item">{{filter.label}}: <strong>{{value.label}}</strong></span><span class="gf-clear"></span>
+                  </a>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% if filters %}
+    {% for filter in filters %}
+    <div data-filter-id="{{filter.id}}" class="gf-option-block {{filter.class}}{% if filter.is_collapse %} is-collapsed{% endif %}">
+      <div class="gf-block-title">
+        <h3><span>{{filter.label}}</span></h3>
+        {% if filter.is_selected %}
+        <a href="javascript:" class="gf-clear" onclick="removeFilter({{filter.id}})">Clear</a>
+        {% endif %}
+      </div>
+      <div class="gf-block-content">
+        {% if filter.searchable and filter.style != 'Slider' %}<input type="text" value="" onkeyup="GloboFilter.searchValues(this);" class="gf-search">{% endif %}
+        <div class="gf-scroll gf-block-scroll">
+          {% if filter.style == 'Slider' %}
+          <div class="gf-range-inputs">
+            <input class="gf-range-min" id="min-{{filter.id}}" value="{{filter.values.min}}" type="text">
+            <span class="gf-range-split"> - </span>
+            <input class="gf-range-max" id="max-{{filter.id}}" value="{{filter.values.max}}" type="text">
+            <input class="gf-inputs" value="{{filter.values.min}}:{{filter.values.max}}" id="ranger-{{filter.id}}" name="filter[{{filter.id}}][]" type="hidden">
+          </div>
+          <div class="gf-range-slider" data-min="{{filter.ranges.min}}" data-max="{{filter.ranges.max}}" data-id="{{filter.id}}" data-attribute="{{filter.id}}" id="slider-{{filter.id}}"></div>
+          {% else %}
+          <ul class="gf-option-box">
+            {% for value in filter.values %}
+              {% if filter.style == 'Checkbox' %}
+                <li><a{% if value.selected %} class="checked"{% endif %} onclick="toggleCheckboxFilter({{filter.id}},'{{value.value | replace:"'", "\'" | escape_once}}')" href="javascript:" title="{{value.label | escape_once}}">{{value.label}} ({{value.count}})</a></li>
+              {% elsif filter.style == 'Radio' %}
+                <li><a{% if value.selected %} class="checked"{% endif %} onclick="toggleRadioFilter({{filter.id}},'{{value.value | replace:"'", "\'" | escape_once}}')" href="javascript:" title="{{value.label | escape_once}}">{{value.label}} ({{value.count}})</a></li>
+              {% elsif filter.style contains 'Swatch' %}
+                <li>
+                  <a{% if value.selected %} class="checked"{% endif %} onclick="toggleCheckboxFilter({{filter.id}},'{{value.value | replace:"'", "\'" | escape_once}}')" href="javascript:" title="{{value.label | escape_once}}">
+                    {% if value.swatch.mode == 1 %}
+                      <span class="gf-option-one-color" style="background-color:{{ value.swatch.color_1 }}"></span>{% if filter.style contains 'Swatch - Text' %} {{value.label}}{% endif %}
+                    {% elsif value.swatch.mode == 2 %}
+                      <span class="gf-option-two-color" style="background-color:{{ value.swatch.color_1 }}"><span class="bottom-color" style="border-bottom-color:{{ value.swatch.color_2 }}"></span></span>{% if filter.style contains 'Swatch - Text' %} {{value.label}}{% endif %}
+                    {% elsif value.swatch.mode == 3 %}
+                      <span class="gf-swatch-image" style="background-color: {{ value.value | replace:"'", "\'" | escape_once }}; background-image: url('{{ value.swatch.image }}')"></span>{% if filter.style contains 'Swatch - Text' %} {{value.label}}{% endif %}
+                    {% else %}
+                      <span class="gf-swatch-image" style="background-color: {{ value.value | replace:"'", "\'" | escape_once }}; background-image: url('{{ value.value | handle | append: '.png' | asset_img_url: '50x' | prepend: 'https:' | split: '?' | first }}')"></span>{% if filter.style contains 'Swatch - Text' %} {{value.label}}{% endif %}
+                    {% endif %}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+</div>
+{% endraw %}

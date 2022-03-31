@@ -1,0 +1,128 @@
+<section class="Section" {{ block.shopify_attributes }}>
+  {%- capture left_image -%}
+    {%- if block.settings.left_image != blank -%}
+      <div class="FeatureText__ImageWrapper">
+        {%- include 'image-size', sizes: '400,600,700,800,900,1000,1200', image: block.settings.left_image -%}
+
+        <!--div class="AspectRatio" style="max-width: {{ block.settings.left_image.width }}px; --aspect-ratio: {{ block.settings.left_image.aspect_ratio }}"-->
+          {%- assign image_url = block.settings.left_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <img class="Image--lazyLoad Image--slideRight" data-src="{{ image_url }}" data-expand="-200" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ block.settings.left_image.alt | escape }}">
+
+          <noscript>
+            <img src="{{ block.settings.left_image | img_url: '800x' }}" alt="{{ block.settings.left_image.alt | escape }}">
+          </noscript>
+        <!--/div-->
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- capture right_image -%}
+    {%- if block.settings.right_image != blank -%}
+      <div class="FeatureText__ImageWrapper">
+        {%- include 'image-size', sizes: '400,600,700,800,900,1000,1200', image: block.settings.right_image -%}
+
+        <div class="AspectRatio" style="max-width: {{ block.settings.right_image.width }}px; --aspect-ratio: {{ block.settings.right_image.aspect_ratio }}">
+          {%- assign image_url = block.settings.right_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <img class="Image--lazyLoad Image--slideLeft" data-src="{{ image_url }}" data-expand="-200" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ block.settings.right_image.alt | escape }}">
+
+          <noscript>
+            <img src="{{ block.settings.right_image | img_url: '800x' }}" alt="{{ block.settings.right_image.alt | escape }}">
+          </noscript>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <div class="FeatureText SideBySide">
+    <div class="FeatureText__ContentWrapper {% if block.settings.left_image != blank %}Has_Image{% endif %}">
+      <div class="FeatureText__Content">
+        {%- if block.settings.left_subheading != blank or block.settings.left_heading != blank -%}
+          <header class="SectionHeader">
+            {%- if block.settings.left_subheading != blank -%}
+              <h3 class="SectionHeader__SubHeading Heading h3">{{ block.settings.left_subheading | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.left_heading != blank -%}
+              <h2 class="SectionHeader__Heading Heading h2">{{ block.settings.left_heading | escape }}</h2>
+            {%- endif -%}
+          </header>
+        {%- endif -%}
+
+        {%- if block.settings.left_text_position == 'below' -%}
+            {{- left_image -}}
+        {%- endif -%}
+
+        {%- if block.settings.left_text != blank -%}
+            <div class="SectionContent Rte">
+                <div class="SectionContent__Description Rte">
+                    {{ block.settings.left_text }}
+                </div>
+            </div>
+        {%- endif -%}
+
+        {%- if block.settings.left_quote != blank -%}
+            <div class="FeaturedQuote">
+                <div class="FeaturedQuote_Content Rte">
+                    {{ block.settings.left_quote }}
+                </div>
+            </div>
+        {%- endif -%}
+
+        {%- if block.settings.left_text_position == 'above' -%}
+            {{- left_image -}}
+        {%- endif -%}
+
+        {%- if block.settings.left_button_text != blank and block.settings.left_button_url != blank -%}
+            <footer class="SectionFooter">
+                <a href="{{ block.settings.left_button_url }}" class="Button Button--secondary">{{ block.settings.left_button_text }}</a>
+            </footer>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="FeatureText__ContentWrapper {% if block.settings.right_image != blank %}Has_Image{% endif %}">
+      <div class="FeatureText__Content">
+        {%- if block.settings.right_subheading != blank or block.settings.right_heading != blank -%}
+          <header class="SectionHeader">
+            {%- if block.settings.right_subheading != blank -%}
+              <h3 class="SectionHeader__SubHeading Heading h3">{{ block.settings.right_subheading | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.right_heading != blank -%}
+              <h2 class="SectionHeader__Heading Heading h2">{{ block.settings.right_heading | escape }}</h2>
+            {%- endif -%}
+          </header>
+        {%- endif -%}
+
+        {%- if block.settings.right_text_position == 'below' -%}
+            {{- right_image -}}
+        {%- endif -%}
+
+        {%- if block.settings.right_text != blank -%}
+            <div class="SectionContent Rte">
+                <div class="SectionContent__Description Rte">
+                    {{ block.settings.right_text }}
+                </div>
+            </div>
+        {%- endif -%}
+
+        {%- if block.settings.right_quote != blank -%}
+            <div class="FeaturedQuote">
+                <div class="FeaturedQuote_Content Rte">
+                    {{ block.settings.right_quote }}
+                </div>
+            </div>
+        {%- endif -%}
+
+        {%- if block.settings.right_text_position == 'above' -%}
+            {{- right_image -}}
+        {%- endif -%}
+
+        {%- if block.settings.right_button_text != blank and block.settings.right_button_url != blank -%}
+            <footer class="SectionFooter">
+                <a href="{{ block.settings.right_button_url }}" class="Button Button--secondary">{{ block.settings.right_button_text }}</a>
+            </footer>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+</section>

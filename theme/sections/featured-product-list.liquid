@@ -1,0 +1,172 @@
+<section id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="featured-product-list" class="{{ section.settings.hidden_on }}">
+  {%- capture product_items -%}
+    {%- for block in section.blocks -%}
+      {%- assign product = products[block.settings.product] -%}
+      {%- include 'featured-product-item', product: product -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  <div class="FeaturedProductList FeaturedProductList--grid {% if section.settings.add_spacing %}FeaturedProductList--spaced{% endif %} {% if section.settings.fullwidth %}FeaturedProductList--fullwidth{% endif %}">
+    {{ product_items }}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured product list",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "select",
+      "id": "hidden_on",
+      "label": "Display On:",
+      "options": [
+          {
+              "value": "hidden-none",
+              "label": "Both"
+          },
+          {
+              "value": "hidden-phone",
+              "label": "Desktop Only"
+          },
+          {
+              "value": "hidden-tablet-and-up",
+              "label": "Mobile Only"
+          }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "fullwidth",
+      "label": "Full Width?",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Image size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "checkbox",
+      "id": "add_spacing",
+      "label": "Add spacing",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "568 x 736px .jpg recommended"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Sub-heading",
+          "default": "Sub-heading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Product name"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL",
+          "info": "If none is set, product URL is used."
+        },
+        {
+          "type": "select",
+          "id": "link_style",
+          "label": "Link Style",
+          "options": [
+            {
+              "value": "Link",
+              "label": "Link"
+            },
+            {
+              "value": "Button",
+              "label": "Button"
+            }
+          ],
+          "default": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name": "Featured product list",
+      "settings": {},
+      "blocks": [
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

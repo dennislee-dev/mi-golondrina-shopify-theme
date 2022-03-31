@@ -1,0 +1,465 @@
+<div class="Container {% if section.settings.page_width == 'fullwidth' %}Container--fullwidth{% endif %}">
+  <header class="PageHeader {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+    <div class="SectionHeader SectionHeader--center {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+      <h1 class="SectionHeader__Heading Heading h1">{{ page.title }}</h1>
+    </div>
+  </header>
+
+  {%- unless page.content == empty -%}
+  <div class="PageContent PageContent--narrow Rte">
+    {{ page.content }}
+  </div>
+  {%- endunless -%}
+
+  <div class="PageContent PageContent--{{ section.settings.page_width }} {{ section.settings.css_classes }}">
+    {%- for block in section.blocks -%}
+      <div class="shopify-section {% if section.settings.section_borders %}shopify-section--bordered{% endif %}">
+        {%- if block.type == 'image-with-text-overlay' -%}
+          {% include 'block.image-with-text-overlay' %}      
+        {%- elsif block.type == 'side-by-side-images' -%}
+          {% include 'block.side-by-side-images' %}      
+        {%- elsif block.type == 'side-by-side-content' -%}
+          {% include 'block.side-by-side-content' %}      
+        {%- elsif block.type == 'image-bar' -%}
+          {% include 'block.image-bar' %}
+        {%- elsif block.type == 'custom-html' -%}
+          {% include 'block.custom-html' %}
+        {%- elsif block.type == 'divider' -%}
+          <div class="Divider"></div>
+        {%- else -%}
+          <p class="Alert--Error">Invalid Section Type: {{ block.type }}</p>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page Content - Ceramics",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Settings"
+    },
+    {
+      "id": "show_page_title",
+      "type": "checkbox",
+      "label": "Show Page Title?",
+      "default": true
+    },
+    {
+      "id": "page_width",
+      "type": "select",
+      "label": "Page Content Width",
+      "options": [
+        {
+          "value": "fullwidth",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "narrow",
+          "label": "Narrow"
+        },
+        {
+          "value": "extraNarrow",
+          "label": "Extra Narrow"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "id": "fitscreen",
+      "type": "checkbox",
+      "label": "Fill screen vertically",
+      "default": false
+    },
+    {
+      "id": "section_borders",
+      "type": "checkbox",
+      "label": "Show section borders?",
+      "default": false
+    },
+    {
+      "id": "css_classes",
+      "type": "text",
+      "label": "Extra Page CSS Classes"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Image with text overlay",
+      "type": "image-with-text-overlay",
+      "settings": [
+        {
+          "type": "select",
+          "id": "section_size",
+          "label": "Section size",
+          "options": [
+            {
+              "value": "ExtraSmall",
+              "label": "Extra Small"
+            },
+            {
+              "value": "Small",
+              "label": "Small"
+            },
+            {
+              "value": "Normal",
+              "label": "Normal"
+            },
+            {
+              "value": "Large",
+              "label": "Large"
+            },
+            {
+              "value": "ExtraLarge",
+              "label": "Extra Large"
+            }
+          ],
+          "default": "Normal"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1500 x 800px .jpg recommended"
+        },
+        {
+          "type": "checkbox",
+          "id": "fullwidth",
+          "label": "Show image full width",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Sub-heading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Tell your story"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>Add your own custom content to give more information about your store, availability details...</p>"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            { "value": "Left", "label": "Left" },
+            { "value": "Center", "label": "Center" },
+            { "value": "Right", "label": "Right" }
+          ],
+          "default": "Center"
+        },
+        {
+          "type": "select",
+          "id": "text_vertical_position",
+          "label": "Text vertical position",
+          "options": [
+            { "value": "Top", "label": "Top" },
+            { "value": "Middle", "label": "Middle" },
+            { "value": "Bottom", "label": "Bottom" }
+          ],
+          "default": "Middle"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        }
+      ]
+    },
+    {
+      "type": "custom-html",
+      "name": "Custom HTML",
+      "settings": [
+        {
+          "type": "select",
+          "id": "section_size",
+          "label": "Section size",
+          "options": [
+            {
+              "value": "ExtraSmall",
+              "label": "Extra Small"
+            },
+            {
+              "value": "Small",
+              "label": "Small"
+            },
+            {
+              "value": "Normal",
+              "label": "Normal"
+            },
+            {
+              "value": "Large",
+              "label": "Large"
+            },
+            {
+              "value": "ExtraLarge",
+              "label": "Extra Large"
+            }
+          ],
+          "default": "Normal"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Sub-heading",
+          "default": "Sub-heading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your HTML"
+        },
+        {
+          "type": "html",
+          "id": "html",
+          "label": "HTML content",
+          "default": "<p>Write your own custom HTML content.</p>"
+        }
+      ]
+    },
+    {
+      "type": "side-by-side-images",
+      "name": "Rich text with image",
+      "settings": [
+         {
+          "type": "select",
+          "id": "section_size",
+          "label": "Section size",
+          "options": [
+            {
+              "value": "extra-small",
+              "label": "Extra Small"
+            },
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "normal",
+              "label": "Normal"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            }
+          ],
+          "default": "large"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Sub-heading",
+          "default": "Sub-heading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Full Image",
+          "info": "1200 x 1200px .png recommended"
+        },
+        {
+          "type": "image_picker",
+          "id": "heading_image",
+          "label": "Small Image",
+          "info": "1200 x 1200px .png recommended"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Full Image Position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>Add your own custom content to give more information about your store, availability details...</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        }
+      ]
+    },
+    {
+      "type": "side-by-side-content",
+      "name": "Side by side content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "left_subheading",
+          "label": "Left column subheading"
+        },
+        {
+          "type": "text",
+          "id": "left_heading",
+          "label": "Left column heading"
+        },
+        {
+          "type": "richtext",
+          "id": "left_text",
+          "label": "Left column text"
+        },
+        {
+          "type": "richtext",
+          "id": "left_quote",
+          "label": "Left column quote"
+        },
+        {
+          "type": "image_picker",
+          "id": "left_image",
+          "label": "Left column image"
+        },
+        {
+          "type": "select",
+          "id": "left_text_position",
+          "label": "Left column text position",
+          "options": [
+            {
+              "value": "above",
+              "label": "Above image"
+            },
+            {
+              "value": "below",
+              "label": "Below image"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "left_button_text",
+          "label": "Left column button text"
+        },
+        {
+          "type": "url",
+          "id": "left_button_url",
+          "label": "Left column button link"
+        },
+        {
+          "type": "text",
+          "id": "right_subheading",
+          "label": "Right column subheading"
+        },
+        {
+          "type": "text",
+          "id": "right_heading",
+          "label": "Right column heading"
+        },
+        {
+          "type": "richtext",
+          "id": "right_text",
+          "label": "Right column text"
+        },
+        {
+          "type": "richtext",
+          "id": "right_quote",
+          "label": "Right column quote"
+        },
+        {
+          "type": "image_picker",
+          "id": "right_image",
+          "label": "Right column image"
+        },
+        {
+          "type": "select",
+          "id": "right_text_position",
+          "label": "Right column text position",
+          "options": [
+            {
+              "value": "above",
+              "label": "Above image"
+            },
+            {
+              "value": "below",
+              "label": "Below image"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "right_button_text",
+          "label": "Right column button text"
+        },
+        {
+          "type": "url",
+          "id": "right_button_url",
+          "label": "Right column button link"
+        }        
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider"
+    }
+  ],
+  "presets": [{
+    "name": "Page Block",
+    "category": "Content"
+  }]
+}
+{% endschema %}

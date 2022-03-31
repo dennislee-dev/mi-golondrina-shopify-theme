@@ -1,0 +1,153 @@
+<div class="Container {% if section.settings.page_width == 'fullwidth' %}Container--fullwidth{% endif %}">
+    <header class="PageHeader {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+        <div class="SectionHeader SectionHeader--center {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+            <h1 class="SectionHeader__Heading Heading h1">{{ page.title }}</h1>
+        </div>
+    </header>
+
+    {%- unless page.content == blank  -%}
+        <div class="PageContent PageContent--narrow Rte">
+            {{ page.content }}
+        </div>
+    {%- endunless -%}
+
+    <div class="PageContent PageContent--{{ section.settings.page_width }} Custom">
+        <div class="shopify-section {% if section.settings.section_borders %}shopify-section--bordered{% endif %}">
+            <section class="Section Section--spacingSmall">
+                <div class="Container">
+                    <header class="SectionHeader SectionHeader--center">
+                        <h2 class="SectionHeader__Heading Heading h1">1. <br> Choose Your Piece</h2>
+                    </header>
+                    <div class="SectionHeader__ButtonWrapper ButtonWrapper">
+                        <div class="ButtonGroup ButtonGroup--sameSize">
+                            <a class="ButtonGroup__Item Button {% if page.handle contains 'blouse' or collection.handle contains 'blouse' %}Button--primary{% else %}Button--secondary{% endif %}" href="/pages/custom-blouse">Blouse</a>
+                            <a class="ButtonGroup__Item Button {% if page.handle contains 'dress' or collection.handle contains 'dress' %}Button--primary{% else %}Button--secondary{% endif %}" href="/pages/custom-dress">Dress</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        {%- unless page.handle == 'custom' -%}
+            {%- if page.handle contains 'dress' or collection.handle contains 'dress' -%}
+                <div class="shopify-section {% if section.settings.section_borders %}shopify-section--bordered{% endif %}">
+                    <section class="Section Section--spacingSmall">
+                        <div class="Container">
+                            <header class="SectionHeader SectionHeader--center">
+                                <h2 class="SectionHeader__Heading Heading h1">2. <br> Choose Your Sleeve</h2>
+                            </header>
+                            <div class="Container Container--extraNarrow">
+                                <div class="Grid Grid--m">
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'sleeveless' %}Active{% endif %}" href="/collections/custom-dress-sleeveless">
+                                            <img src="{{ 'custom-dress-sleeveless.png' | asset_url }}" class="ImageButton__Image" alt="Sleeveless Dress">
+                                            <h4 class="h3 ImageButton__Label">Sleeveless</h4>
+                                        </a>
+                                    </div>
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'liliana' %}Active{% endif %}" href="/collections/custom-dress-liliana">
+                                            <img src="{{ 'custom-dress-liliana.png' | asset_url }}" class="ImageButton__Image" alt="Liliana Dress">
+                                            <h4 class="h3 ImageButton__Label">Liliana</h4>
+                                        </a>
+                                    </div>
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'soledad' %}Active{% endif %}" href="/collections/custom-dress-soledad">
+                                            <img src="{{ 'custom-dress-soledad.png' | asset_url }}" class="ImageButton__Image" alt="Soledad Dress">
+                                            <h4 class="h3 ImageButton__Label">Soledad</h4>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            {%- else -%}
+                <div class="shopify-section {% if section.settings.section_borders %}shopify-section--bordered{% endif %}">
+                    <section class="Section Section--spacingSmall">
+                        <div class="Container">
+                            <header class="SectionHeader SectionHeader--center">
+                                <h2 class="SectionHeader__Heading Heading h1">2. <br> Choose Your Sleeve</h2>
+                            </header>
+                            <div class="Container Container--extraNarrow">
+                                <div class="Grid Grid--m">
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'sleeveless' %}Active{% endif %}" href="/collections/custom-blouse-sleeveless">
+                                            <img src="{{ 'custom-sleeve-sleeveless.png' | asset_url }}" class="ImageButton__Image" alt="Sleeveless Blouse">
+                                            <h4 class="h3 ImageButton__Label">Sleeveless</h4>
+                                        </a>
+                                    </div>
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'liliana' %}Active{% endif %}" href="/collections/custom-blouse-liliana">
+                                            <img src="{{ 'custom-sleeve-liliana.png' | asset_url }}" class="ImageButton__Image" alt="Liliana Blouse">
+                                            <h4 class="h3 ImageButton__Label">Liliana</h4>
+                                        </a>
+                                    </div>
+                                    <div class="Grid__Cell 1/3">
+                                        <a class="ImageButton {% if collection.handle contains 'soledad' %}Active{% endif %}" href="/collections/custom-blouse-soledad">
+                                            <img src="{{ 'custom-sleeve-soledad.png' | asset_url }}" class="ImageButton__Image" alt="Soledad Blouse">
+                                            <h4 class="h3 ImageButton__Label">Soledad</h4>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            {%- endif -%}
+        {%- endunless -%}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "class": "shopify-section--bordered",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Settings"
+    },
+    {
+      "id": "show_page_title",
+      "type": "checkbox",
+      "label": "Show Page Title?",
+      "default": true
+    },
+    {
+      "id": "page_width",
+      "type": "select",
+      "label": "Page Content Width",
+      "options": [
+        {
+          "value": "fullwidth",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "narrow",
+          "label": "Narrow"
+        },
+        {
+          "value": "extraNarrow",
+          "label": "Extra Narrow"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "id": "fitscreen",
+      "type": "checkbox",
+      "label": "Fill screen vertically",
+      "default": false
+    },
+    {
+      "id": "section_borders",
+      "type": "checkbox",
+      "label": "Show section borders?",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

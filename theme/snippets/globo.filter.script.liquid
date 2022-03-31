@@ -1,0 +1,58 @@
+{{ 'v5.globo.filter.css' | asset_url | stylesheet_tag }}<script>
+{%- assign assets_url = 'product-1.png' | asset_img_url: '50x' | split: 'product-1_50x.png' -%}
+{%- assign files_url  = 'product-1.png' | file_img_url: '50x' | split: 'product-1_50x.png' -%}
+  window.moneyFormat = "{{ shop.money_format | replace:'"',"'" }}";
+  window.GloboMoneyFormat = "{{ shop.money_format | replace:'"',"'" }}";
+  window.shopCurrency = "{{ shop.currency }}";
+  window.assetsUrl = '{{ assets_url[0] }}';
+  window.filesUrl = '{{ files_url[0] }}';
+  var page_id = {% if template contains 'collection' %}{% if collection.handle == 'all' %}1{% else %}{{collection.id | default: 1}}{% endif %}{% elsif template contains 'search' %}2{% else %}0{% endif %};
+  var GloboFilterConfig = {
+    api: {
+      filterUrl: "https://filter-v5.globosoftware.net/filter",
+      searchUrl: "https://filter-v5.globosoftware.net/search",
+    },
+    shop: {
+      name: "{{ shop.name | escape }}",
+      url: "{{ shop.url }}",
+      domain: "{{ shop.permanent_domain }}",
+      locale: {{request.locale.iso_code | json}},
+      is_multicurrency: {% assign is_multicurrency = shop.enabled_currencies | size %}{% if is_multicurrency > 1 %}true{% else %}false{% endif %},
+      currency: {{shop.currency | json}},
+      current_currency: {{cart.currency.iso_code | json}},
+      product_image: {width: 500, height: 500},
+      no_image_url: "https://cdn.shopify.com/s/images/themes/product-1.png",
+      themeStoreId: 855,
+      swatches: {{ shop.metafields.globo.swatches | json }},
+      translation: {{ shop.metafields.globo.translation | json }},
+      redirects: {{ shop.metafields.globo.redirects | json }},
+      images: ["color-beige.png","color-black.png","color-blue.png","color-brown.png","color-gingham.png","color-gold.png","color-gray.png","color-green.png","color-ivory.png","color-multicolor.png","color-navy.png","color-orange.png","color-pink.png","color-plaid.png","color-purple.png","color-red.png","color-silver.png","color-white.png","color-yellow.png","custom-dress-liliana.png","custom-dress-sleeveless.png","custom-dress-soledad.png","custom-sleeve-liliana.png","custom-sleeve-sleeveless.png","custom-sleeve-soledad.png","dpo_custom_option_51697_block-monogram.jpg","dpo_custom_option_51841_screen-shot-2018-12-02-at-11.21.34-pm.png","dpo_custom_option_71768_script-mono.jpg","logo-no-bird@2x.png","logo-white@2x.png","password.jpg"]    },
+    filter: {
+      id: {{ shop.metafields.globo.filters | json }}[page_id] || {{ shop.metafields.globo.filters | json }}['default'] || 0,
+      layout: 1,
+      showCount: 1,
+      isLoadMore: 1    },
+    collection: {
+      id: {{ collection.id | default: 0 }},
+      handle: '{{ collection.handle }}',
+      sort: {% if template contains 'collection' %}"{{ collection.default_sort_by | default: 'best-selling' }}"{% else %}null{% endif %},
+      tags: {% if current_tags %}[{% for tag in current_tags %}{{ tag | handle | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]{% else %}null{% endif %},
+      vendor: "{{ collection.current_vendor }}",
+      type: "{{ collection.current_type }}",
+      term: "{{ search.terms | escape }}",
+      limit: 24,
+      products_count: {{collection.products_count | default: 0}}
+    },
+    customer: {% if customer %}{id: {{customer.id}}, tags: {{customer.tags | json}}}{% else %}false{% endif %},
+    selector: {
+      sortBy: '.collection-sorting',
+      pagination: '.pagination:first, .paginate:first, .pagination-custom:first, #pagination:first',
+      products: '.grid.grid-collage'
+    }
+  };
+</script>
+<script id="gspfSearchResult" type="template/html">{% include 'globo.filter.search' %}</script><script id="gspfFilterTree"   type="template/html">{% include 'globo.filter.tree' %}</script>
+<script id="gspfFilterSort"   type="template/html">{% include 'globo.filter.sort' %}</script>
+<script id="gspfProduct"      type="template/html">{% include 'globo.filter.product' %}</script>
+<script id="gspfPagination"   type="template/html">{% include 'globo.filter.pagination' %}</script>
+{{ 'v5.globo.filter.lib.js' | asset_url | script_tag }}<script type="text/javascript">var globofilter = new GloboFilter(GloboFilterConfig);</script>

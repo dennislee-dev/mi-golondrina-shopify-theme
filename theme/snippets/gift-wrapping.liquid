@@ -1,0 +1,132 @@
+{%- if settings.gift_wrapping_enabled -%}
+<!-- DO NOT REMOVE THE FOLLOWING COMMENT -->
+<!-- (c) Copyright 2014 Caroline Hill. All Rights Reserved. Contact Mlle Caroline Schnapp at mllegeorgesand@gmail.com -->
+<!-- DO NOT REMOVE THE ABOVE COMMENT -->
+
+{% if linklists.gift-wrapping.links.size > 0 and linklists.gift-wrapping.links.first.type == 'product_link' %}
+
+  <div id="is-a-gift" style="clear: left; padding: 0 30px 30px 0" class="Cart__NoteContainer clearfix rte">
+      <input type="hidden" name="attributes[gift-wrapping]" value="" />
+      <input id="gift-wrapping" type="checkbox" name="attributes[gift-wrapping]" value="yes" {% if cart.attributes.gift-wrapping %} checked="checked"{% endif %} style="float: none" />
+      <label for="gift-wrapping" style="display:inline; padding-right: 5px; float: none;">
+        {{ settings.gift_wrapping_message }}
+      </label>
+      <div class="hide-if-not-gift">
+        <label style="display:block" for="gift-note">Gift message (optional):</label>
+        <textarea name="attributes[gift-note]" id="gift-note" class="Form__Textarea">{{ cart.attributes.gift-note }}</textarea>
+      </div>
+  </div>
+
+{% assign id = linklists.gift-wrapping.links.first.object.variants.first.id %}
+
+{% assign gift_wraps_in_cart = 0 %}
+{% for item in cart.items %}
+  {% if item.id == id %}
+    {% assign gift_wraps_in_cart = item.quantity %}
+  {% endif %}
+{% endfor %}
+
+<style>
+  #updates_{{ id }} { display: none; }
+</style>
+
+<!--script>
+
+Shopify.Cart = Shopify.Cart || {};
+
+Shopify.Cart.GiftWrap = {};
+
+var GiftWrapInProgress = false;
+Shopify.Cart.GiftWrap.set = function() {
+  $('#is-a-gift .Error').remove();
+  $('.Cart .Button.Cart__Checkout').attr('disabled','disabled').addClass('Disabled').addClass('Loading');
+  jQuery.ajax({
+    type: 'POST',
+    url: '/cart/update.js', 
+    data: { updates: { {{ id }}: 1 }, attributes: { 'gift-wrapping': true } }, 
+    dataType: 'json',
+    success: function() {
+      location.href = '/cart';
+    },
+    error: function() { 
+      jQuery('[name="attributes\[gift-wrapping\]"]').prop('checked',false).attr('checked',null).removeAttr('checked');
+      $('#is-a-gift').prepend($('<span class="Error">Error adding gift wrapping to cart. Please try again.</span>'));
+      $('.Cart .Button.Cart__Checkout').attr('disabled',null).removeClass('Disabled').removeClass('Loading'); 
+    },
+    timeout: 10000
+  });
+}
+
+Shopify.Cart.GiftWrap.remove = function() {
+  $('#is-a-gift .Error').remove();
+  $('.Cart .Button.Cart__Checkout').attr('disabled','disabled').addClass('Disabled').addClass('Loading');
+  jQuery.ajax({
+    type: 'POST',
+    url: '/cart/update.js', 
+    data: { updates: { {{ id }}: 0 }, attributes: { 'gift-wrapping': '' } }, 
+    dataType: 'json',
+    success: function() { 
+      location.href = '/cart'; 
+    },
+    error: function() { 
+      jQuery('[name="attributes\[gift-wrapping\]"]').prop('checked',true).attr('checked','checked');
+      $('#is-a-gift').prepend($('<span class="Error">Error removing gift wrapping from cart. Please try again.</span>'));
+      $('.Cart .Button.Cart__Checkout').attr('disabled',null).removeClass('Disabled').removeClass('Loading'); 
+    },
+    timeout: 10000
+  });
+}
+
+// If we have nothing but gift-wrap items in the cart.
+{% if cart.items.size == 1 and gift_wraps_in_cart > 0 %}
+jQuery(function() {
+  Shopify.Cart.GiftWrap.remove();
+});
+// If we have more than one gift-wrap item in the cart.
+{% elsif gift_wraps_in_cart > 1 %}
+jQuery(function() {
+  Shopify.Cart.GiftWrap.set();
+});
+// If we have a gift-wrap item in the cart but our gift-wrapping cart attribute has not been set.
+{% elsif gift_wraps_in_cart > 0 and cart.attributes.gift-wrapping == blank  %}
+jQuery(function() {
+  Shopify.Cart.GiftWrap.set();
+});
+// If we have no gift-wrap item in the cart but our gift-wrapping cart attribute has been set.
+{% elsif gift_wraps_in_cart == 0 and cart.attributes.gift-wrapping != blank  %}
+jQuery(function() {
+  Shopify.Cart.GiftWrap.set();
+});
+{% endif %}
+
+// When the gift-wrapping checkbox is checked or unchecked.
+jQuery(function() {
+  jQuery('input#gift-wrapping').on('change',function() {
+    console.log('giftwrapping changed');
+    if (jQuery(this).is(':checked')) {
+      Shopify.Cart.GiftWrap.set();    
+    }
+    else {
+      Shopify.Cart.GiftWrap.remove();
+    }
+  });
+});
+document.addEventListener('cart:reloaded',function() {
+  console.log('cart:reloaded' + $('.CartItem[data-variant-id={{id}}]').length);
+  if ($('.CartItem[data-variant-id={{id}}]').length == 0 && $('input#gift-wrapping').is(':checked')) {
+    Shopify.Cart.GiftWrap.remove();
+  }
+});
+</script-->
+
+{% else %}
+
+<p style="clear: left; margin: 30px 0" class="rte">
+  You attempted to add a gift-wrapping script to your shopping cart, but it won't work because you don't have 
+  a link list with handle <code>gift-wrapping</code> which, in turn, contains a link
+  to your gift-wrapping product. Please review the steps outlined 
+  <a href="http://docs.shopify.com/manual/configuration/store-customization/page-specific/cart-page/add-a-gift-wrap-option">here</a>.
+</p>
+
+{% endif %}
+{% endif %}

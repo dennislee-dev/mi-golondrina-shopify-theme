@@ -1,0 +1,36 @@
+{% raw %}
+<div class="Pagination Text--subdued Text--alignRight">
+  <div class="Pagination__Nav">
+    {% if paginate.current_page > 1 %}
+    <a class="Pagination__NavItem Link Link--primary" rel="prev" title="Previous page" onclick="setPage({{paginate.current_page | minus: 1}})" href="javascript:;"><svg class="Icon Icon--select-arrow-left" role="presentation" viewBox="0 0 11 18"><path d="M9.5 1.5L1.5 9l8 7.5" stroke-width="2" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="square"></path></svg></a>
+    <a onclick="setPage(1)" href="javascript:;" class="Pagination__NavItem Link Link--primary" title="1">1</a>
+    {% endif %}
+    {% if paginate.current_page > 4 %}
+    <span class="Pagination__NavItem ">…</span>
+    {% endif %}
+    {% if paginate.current_page > 3 %}
+    <a onclick="setPage({{paginate.current_page | minus: 2}})" href="javascript:;" class="Pagination__NavItem Link Link--primary" title="{{paginate.current_page | minus: 2}}">{{paginate.current_page | minus: 2}}</a>
+    {% endif %}
+    {% if paginate.current_page > 2 %}
+    <a class="Pagination__NavItem Link Link--primary" onclick="setPage({{paginate.current_page | minus: 1}})" href="javascript:;">{{paginate.current_page | minus: 1}}</a>
+    {% endif %}
+    <span class="Pagination__NavItem is-active">{{paginate.current_page}}</span>
+    {% assign prevPage = paginate.last_page | minus: 1 %}
+    {% if prevPage > paginate.current_page %}
+    <a class="Pagination__NavItem Link Link--primary" onclick="setPage({{paginate.current_page | plus: 1}})" href="javascript:;">{{paginate.current_page | plus: 1}}</a>
+    {% endif %}
+    {% assign _prevPage = paginate.last_page | minus: 2 %}
+    {% if _prevPage > paginate.current_page %}
+    <a class="Pagination__NavItem Link Link--primary" onclick="setPage({{paginate.current_page | plus: 2}})" href="javascript:;">{{paginate.current_page | plus: 2}}</a>
+    {% endif %}
+    {% assign __prevPage = paginate.last_page | minus: 3 %}
+    {% if __prevPage > paginate.current_page %}
+    <span class="Pagination__NavItem ">…</span>
+    {% endif %}
+    {% if paginate.last_page > paginate.current_page %}
+    <a class="Pagination__NavItem Link Link--primary" onclick="setPage({{paginate.last_page}})" href="javascript:;">{{paginate.last_page}}</a>
+    <a class="Pagination__NavItem Link Link--primary" onclick="setPage({{paginate.current_page | plus: 1}})" href="javascript:;" ><svg class="Icon Icon--select-arrow-right" role="presentation" viewBox="0 0 11 18"><path d="M1.5 1.5l8 7.5-8 7.5" stroke-width="2" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="square"></path></svg></a>
+    {% endif %}
+  </div>
+</div>
+{% endraw %}

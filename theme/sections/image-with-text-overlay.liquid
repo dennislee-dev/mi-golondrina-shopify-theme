@@ -1,0 +1,240 @@
+<section id="section-{{ section.id }}" class="{{ section.settings.hidden_on }}">
+  {%- capture mobile_size -%}750x{% if section.settings.image.height >= 960 %}960{% else %}{{ section.settings.image.height }}{% endif %}{%- endcapture -%}
+
+  <div class="FlexboxIeFix">
+    <div class="ImageHero {% if section.settings.fullwidth == true %}ImageHero--fullwidth {% endif %}{% if section.settings.section_size != 'normal' %}ImageHero--{{ section.settings.section_size }}{% endif %} {% unless section.settings.show_image_on_mobile %}ImageHero--hideOnMobile{% endunless %}" {% if section.settings.image %}style="background: url({{ section.settings.image | img_url: '1x1' }})"{% endif %}>
+      <div class="ImageHero__ImageWrapper">
+        <div class="ImageHero__Image {% if section.settings.overlay_opacity > 0 %}ImageHero__ImageWrapper--hasOverlay{% endif %} Image--lazyLoad Image--zoomOut"
+             data-optimumx="1.4"
+             data-expand="-150"
+             {% if section.settings.image %}data-bgset="{{ section.settings.image | img_url: mobile_size, crop: 'center' }} 750w, {{ section.settings.image | img_url: '1000x' }} 1000w, {{ section.settings.image | img_url: '1500x' }} 1500w"{% endif %}>
+        </div>
+
+        <noscript>
+          <div class="ImageHero__Image" style="background-image: url({{ section.settings.image | img_url: '1000x' }})"></div>
+        </noscript>
+
+        {%- unless section.settings.image != blank -%}
+          <div class="PlaceholderBackground PlaceholderBackground--Dark">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'PlaceholderBackground__Svg' }}
+          </div>
+        {%- endunless -%}
+      </div>
+
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.content != blank -%}
+        <div class="ImageHero__ContentOverlay ImageHero__ContentAlign{{ section.settings.text_position }} ImageHero__ContentAlign{{ section.settings.text_vertical_position }}">
+          {%- if section.settings.subheading != blank or section.settings.title != blank -%}
+            <header class="SectionHeader">
+              {%- if section.settings.subheading != blank -%}
+                <h3 class="SectionHeader__SubHeading Heading h3">{{ section.settings.subheading | escape }}</h3>
+              {%- endif -%}
+
+              {%- if section.settings.title != blank -%}
+                <h2 class="SectionHeader__Heading Heading h2">{{ section.settings.title | escape }}</h2>
+              {%- endif -%}
+
+              {%- if section.settings.content != blank -%}
+                <div class="SectionHeader__Description">
+                  {{ section.settings.content }}
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.link_text != blank and section.settings.link_url != blank -%}
+                <div class="SectionHeader__Link">
+                  <a href="{{ section.settings.link_url }}" class="h3">{{ section.settings.link_text }}</a>
+                </div>
+              {%- endif -%}
+            </header>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #section-{{ section.id }},
+  #section-{{ section.id }} .Heading {
+    color: {{ section.settings.text_color }};
+  }
+
+  {%- capture 'overlay' -%}
+  #section-{{ section.id }} .ImageHero__ImageWrapper--hasOverlay::before {
+    {%- assign overlay_opacity = section.settings.overlay_opacity | divided_by: 100.0 -%}
+    background-color: {{ section.settings.overlay_color | color_modify: 'alpha', overlay_opacity }};
+  }
+  {%- endcapture -%}
+  {%- if section.settings.overlay_on == 'phone' -%}
+    @media screen and (max-width: 640px) {
+      {{ overlay }}
+    }
+  {%- elsif section.settings.overlay_on == 'desk' -%}
+    @media screen and (min-width: 641px) {
+      {{ overlay }}
+    }
+  {%- else -%}
+    {{ overlay }}
+  {%- endif -%}
+</style>
+
+{% schema %}
+{
+  "name": "Image with text overlay",
+  "settings": [
+    {
+      "type": "select",
+      "id": "hidden_on",
+      "label": "Display On:",
+      "options": [
+          {
+              "value": "hidden-none",
+              "label": "Both"
+          },
+          {
+              "value": "hidden-phone",
+              "label": "Desktop Only"
+          },
+          {
+              "value": "hidden-tablet-and-up",
+              "label": "Mobile Only"
+          }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_size",
+      "label": "Section size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_on_mobile",
+      "label": "Show image on mobile?",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "1500 x 800px .jpg recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "fullwidth",
+      "label": "Show image full width",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "overlay_on",
+      "label": "Display Overlay On:",
+      "options": [
+          {
+              "value": "both",
+              "label": "Both"
+          },
+          {
+              "value": "desk",
+              "label": "Desktop Only"
+          },
+          {
+              "value": "phone",
+              "label": "Mobile Only"
+          }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sub-heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Tell your story"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "default": "<p>Add your own custom content to give more information about your store, availability details...</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        { "value": "Left", "label": "Left" },
+        { "value": "Center", "label": "Center" },
+        { "value": "Right", "label": "Right" }
+      ],
+      "default": "Center"
+    },
+    {
+      "type": "select",
+      "id": "text_vertical_position",
+      "label": "Text vertical position",
+      "options": [
+        { "value": "Top", "label": "Top" },
+        { "value": "Middle", "label": "Middle" },
+        { "value": "Bottom", "label": "Bottom" }
+      ],
+      "default": "Middle"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Image",
+      "name": "Image with text (overlay)",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

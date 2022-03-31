@@ -1,0 +1,153 @@
+<div class="Container {% if section.settings.page_width == 'fullwidth' %}Container--fullwidth{% endif %}">
+  <header class="PageHeader {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+    <div class="SectionHeader SectionHeader--center {% unless section.settings.show_page_title %}u-visually-hidden{% endunless %}">
+      <h1 class="SectionHeader__Heading Heading h1">{{ page.title }}</h1>
+    </div>
+  </header>
+
+  {%- unless page.content == empty -%}
+  <div class="PageContent PageContent--narrow Rte">
+    {{ page.content }}
+  </div>
+  {%- endunless -%}
+
+  <div class="PageContent Events PageContent--{{ section.settings.page_width }} {{ section.settings.css_classes }}">
+    {%- for block in section.blocks -%}
+      <div class="shopify-section {% if section.settings.section_borders %}shopify-section--bordered{% endif %}">
+        {%- if block.type == 'heading' -%}
+          <div class="Section__Heading SectionHeader SectionHeader--center">
+            <h2 class="SectionHeader__Heading Heading h2">{{ block.settings.heading }}</h2>
+          </div>
+        {%- elsif block.type == 'event' -%}
+          {% include 'block.event' %}      
+        {%- elsif block.type == 'divider' -%}
+          <div class="Divider"></div>
+        {%- else -%}
+          <p class="Alert--Error">Invalid Section Type: {{ block.type }}</p>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Settings"
+    },
+    {
+      "id": "show_page_title",
+      "type": "checkbox",
+      "label": "Show Page Title?",
+      "default": true
+    },
+    {
+      "id": "page_width",
+      "type": "select",
+      "label": "Page Content Width",
+      "options": [
+        {
+          "value": "fullwidth",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "narrow",
+          "label": "Narrow"
+        },
+        {
+          "value": "extraNarrow",
+          "label": "Extra Narrow"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "id": "fitscreen",
+      "type": "checkbox",
+      "label": "Fill screen vertically",
+      "default": false
+    },
+    {
+      "id": "section_borders",
+      "type": "checkbox",
+      "label": "Show section borders?",
+      "default": false
+    },
+    {
+      "id": "css_classes",
+      "type": "text",
+      "label": "Extra Page CSS Classes"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Heading",
+      "type": "heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading Text",
+          "default": "Heading Text"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "name": "Event",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Event Title"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "Event Location"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Event Date(s)"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Event Details"
+        },
+        {
+          "type": "image_picker",
+          "id": "event_image",
+          "label": "Event image"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link"
+        }        
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider"
+    }
+  ],
+  "presets": [{
+    "name": "Page Block",
+    "category": "Content"
+  }]
+}
+{% endschema %}

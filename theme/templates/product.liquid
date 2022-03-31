@@ -1,0 +1,52 @@
+{% section 'product-template' %}
+{% if product.tags contains 'type-bridal' or product.tags contains 'bridal' %}
+    {% assign section = page.bridal-extra-content.sections | first %}
+    {% section "page-extra-content" %}
+
+    {% assign bridal_faq_page = pages['bridal-faq'] %}
+    {% assign bridal_contact_page = pages['bridal-contact'] %}
+    {% capture bridal_modals %}
+    <div id="modal-{{ bridal_faq_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+        <header class="Modal__Header AlignLeft">
+            <h3 class="Modal__Subtitle h3">Commonly Asked Questions</h3>
+            <h2 class="Modal__Title h2">Bridal</h2>
+        </header>
+
+        <div class="Modal__Content">
+            {%- assign section = bridal_faq_page.sections | first -%}
+            {% section 'page-faq-template' %}
+        </div>
+
+        <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+    </div>
+    <div id="modal-{{ bridal_contact_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+        <div class="Modal__Content">
+            {%- assign section = bridal_contact_page.sections | first -%}
+            {% section 'page-contact-template' %}
+        </div>
+
+        <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+    </div>
+    {% endcapture %}
+    {{- bridal_modals -}}
+{%- else -%}
+    {% section 'product-recommendations' %}
+    {%comment%}{% section 'recently-viewed-products' %}{%endcomment%}
+{%- endif -%}
+{%- assign fit_guide_page = pages['fit-guide'] -%}
+{%- capture fit_guide_modal -%}
+    <div id="modal-{{ fit_guide_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+        <header class="Modal__Header AlignLeft">
+            <h2 class="Modal__Title h2">{{ fit_guide_page.title }}</h2>
+        </header>
+
+        <div class="Modal__Content">
+            {%- assign section = fit_guide_page.sections | first -%}
+            {%- section 'page-modal-fit-guide-content' -%}
+        </div>
+
+        <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+    </div>
+{%- endcapture -%}
+{{ fit_guide_modal }}
+<script type="text/javascript" src="https://www.itoris.com/shopifyapp/dpo/storefront/include.js?shop=mi-golondrina.myshopify.com"></script>

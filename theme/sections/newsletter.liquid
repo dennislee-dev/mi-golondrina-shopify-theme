@@ -1,0 +1,220 @@
+<section id="section-{{ section.id }}">
+  {%- capture mobile_size -%}750x{% if section.settings.image.height >= 960 %}960{% else %}{{ section.settings.image.height }}{% endif %}{%- endcapture -%}
+
+  <div class="FlexboxIeFix">
+    <div class="ImageHero {% if section.settings.section_size != 'normal' %}ImageHero--{{ section.settings.section_size }}{% endif %} {% if section.settings.fullwidth %}ImageHero--fullwidth{% endif %} ImageHero--newsletter" {% if section.settings.image %}style="background: url({{ section.settings.image | img_url: '1x1' }})"{% endif %}>
+      <div class="ImageHero__ImageWrapper">
+        {%- unless section.settings.image == blank -%}
+        <div class="ImageHero__Image Image--lazyLoad Image--zoomOut"
+             data-optimumx="1.4"
+             data-expand="-150"
+             {% if section.settings.image %}data-bgset="{{ section.settings.image | img_url: mobile_size, crop: 'center' }} 750w, {{ section.settings.image | img_url: '1000x' }} 1000w, {{ section.settings.image | img_url: '1500x' }} 1500w"{% endif %}>
+        </div>
+
+        <noscript>
+          <div class="ImageHero__Image" style="background-image: url({{ section.settings.image | img_url: '1000x' }})"></div>
+        </noscript>
+        {%- endunless -%}
+      </div>
+
+      <div class="ImageHero__ContentOverlay">
+        <header class="SectionHeader SectionHeader--center">
+          {%- if section.settings.subheading != blank -%}
+            <h3 class="SectionHeader__SubHeading Heading h3">{{ section.settings.subheading | escape }}</h3>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="SectionHeader__Heading Heading h2">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.content != blank -%}
+            <div class="SectionHeader__Description">
+              {{ section.settings.content }}
+            </div>
+          {%- endif -%}
+        </header>
+
+        {%- assign newsletter_id = 'footer-' | append: section.id -%}
+
+        <form id="email_signup" class="Newsletter Form" method="GET" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" target="_blank" novalidate="novalidate">
+          <input type="hidden" name="g" value="Hjnrzx">
+          <input type="hidden" name="$fields" value="$consent">
+          <input type="hidden" name="$list_fields" value="$consent">
+          <input type="hidden" name="$consent" value="email">
+          <input type="hidden" name="$consent" value="web">
+          <div class="Newsletter__Inner">
+            <input class="Form__Input" type="email" name="email" value="" id="k_id_email" aria-label="{{ 'home_page.newsletter.input' | t }}" placeholder="{{ 'home_page.newsletter.input' | t }}" required>
+            <button type="submit" class="Form__Submit Button Button--primary">{{ 'home_page.newsletter.submit' | t }}</button>
+          </div>
+          <div class="klaviyo_messages">
+            <div class="Form__Alert Alert Alert--success success_message" style="display:none;"></div>
+            <div class="Form__Alert Alert Alert--error error_message" style="display:none;"></div>
+          </div>
+        </form>
+        <script type="text/javascript" src="//www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+        <script type="text/javascript">
+          KlaviyoSubscribe.attachToForms('#email_signup', {
+            hide_form_on_success: true,
+            extra_properties: {
+              $source: 'HomePageSignUp',
+              $method_type: "Klaviyo Form",
+              $method_id: 'embed',
+              $consent_version: 'Embed default text'
+            }
+          });
+        </script>
+        {%comment%}
+        {%- form 'customer', id: newsletter_id, class: 'Newsletter Form' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="Form__Alert Alert Alert--success">{{ 'home_page.newsletter.success' | t }}</p>
+          {%- else -%}
+            {%- if form.errors -%}
+              <p class="Form__Alert Alert Alert--error">{{ form.errors.messages['email'] }}</p>
+            {%- endif -%}
+
+            <div class="Newsletter__Inner">
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <input type="email" name="contact[email]" class="Form__Input" aria-label="{{ 'home_page.newsletter.input' | t }}" placeholder="{{ 'home_page.newsletter.input' | t }}" required>
+              <button type="submit" class="Form__Submit Button Button--primary">{{ 'home_page.newsletter.submit' | t }}</button>
+            </div>
+          {%- endif -%}
+        {%- endform -%}
+        {%endcomment%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #section-{{ section.id }},
+  #section-{{ section.id }} .Heading {
+    color: {{ section.settings.text_color }};
+  }
+
+  #section-{{ section.id }} .Form__Submit {
+    border-color: {{ section.settings.text_color }};
+    color: {{ section.settings.button_color }};
+  }
+
+  #section-{{ section.id }} .Form__Submit::before {
+    background-color: {{ section.settings.text_color }};
+  }
+
+  @media (-moz-touch-enabled: 0), (hover: hover) {
+    #section-{{ section.id }} .Form__Submit:hover {
+      color: {{ section.settings.text_color }};
+    }
+  }
+
+  {%- if section.settings.image == blank -%}
+  #section-{{ section.id }} .ImageHero__ImageWrapper {
+    background-color: {{ section.settings.background_color }};
+  }
+  {%- endif -%}
+</style>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "fullwidth",
+      "label": "Fullwidth?",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "hidden_on",
+      "label": "Display On:",
+      "options": [
+          {
+              "value": "hidden-none",
+              "label": "Both"
+          },
+          {
+              "value": "hidden-phone",
+              "label": "Desktop Only"
+          },
+          {
+              "value": "hidden-tablet-and-up",
+              "label": "Mobile Only"
+          }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_size",
+      "label": "Section size",
+      "options": [
+        {
+          "value": "extra-small",
+          "label": "Extra Small"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image (optional)",
+      "info": "1500 x 800px .jpg recommended"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color (used if Image is blank)",
+      "default": "#999"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button text",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sub-heading",
+      "default": "Keep updated"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "default": "<p>A short sentence describing what someone will receive by subscribing</p>"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Promotional",
+      "name": "Newsletter",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

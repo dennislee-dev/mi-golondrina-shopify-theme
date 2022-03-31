@@ -1,0 +1,57 @@
+{% section "page-extra-content-bridal" %}
+
+  {% assign bridal_faq_page = pages['bridal-faq'] %}
+  {% assign bridal_contact_page = pages['bridal-contact'] %}
+  {% assign bridal_modal_page = pages['bridal-modal-content'] %}
+
+  {%- capture bridal_contact_modal -%}
+    {%- assign section = bridal_contact_page.sections | first -%}
+    {% section 'page-contact-bridal' %}
+  {%- endcapture -%}
+
+  {% capture bridal_modals %}
+  <div id="modal-{{ bridal_faq_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+      <header class="Modal__Header AlignLeft">
+          <h3 class="Modal__Subtitle h3">Commonly Asked Questions</h3>
+          <h2 class="Modal__Title h2">Bridal</h2>
+      </header>
+
+      <div class="Modal__Content">
+          {%- assign section = bridal_faq_page.sections | first -%}
+          {% section 'page-faq-template' %}
+      </div>
+
+      <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+  </div>
+  <div id="modal-{{ bridal_contact_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+      <div class="Modal__Content">
+          {{- bridal_contact_modal -}}
+      </div>
+
+      <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+  </div>
+  <div id="modal-{{ bridal_modal_page.handle }}" class="Modal Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>
+      <div class="Modal__Content">
+          {%- assign section = bridal_modal_page.sections | first -%}
+          {% section 'page-modal-bridal-content' %}
+      </div>
+
+      <button class="Modal__Close Modal__Close--outside RoundButton RoundButton--large" data-action="close-modal">{% include 'icon' with 'close' %}</button>
+  </div>
+  <a href="#" class="u-visually-hidden" id="bridal-modal-open" data-action="open-modal" aria-controls="modal-bridal-modal-content"></a>
+  {% endcapture %}
+  {{- bridal_modals -}}
+  {{- bridal_contact_modal -}}
+
+<script>
+$(function() {
+    $('#shopify-section-page-extra-content-bridal').each(function() {
+        if (!getCookie('bridal')) {
+            setTimeout(() => {
+                document.getElementById('bridal-modal-open').click()
+                setCookie('bridal','viewed',365);
+            }, 2000);
+        }
+    });
+});
+</script>

@@ -1,0 +1,68 @@
+{%- if block.settings.embedded_collection != blank -%}
+  {%- assign desktop_items_per_row = 4 | times: 1 -%}
+  {%- assign tablet_items_per_row = 3 | times: 1 -%}
+  {%- assign mobile_items_per_row  = 2 | times: 1 -%}
+
+  {% assign the_collection = collections[block.settings.embedded_collection] %}
+  {% assign section_settings = '{"collectionUrl": "THEURL","currentTags": [],"sortBy": "best-selling","filterPosition": "sidebar"}' | replace: 'THEURL', the_collection.url %}
+
+  <section data-section-id="{{ section.id }}" data-section-type="collection" data-section-settings='{{ section_settings }}' class="algolia-collection-search">
+    {%- if block.settings.heading != blank -%}
+      <header class="PageHeader">
+        <div class="Container">
+          <div class="SectionHeader SectionHeader--center">
+            <h2 class="SectionHeader__Heading h2">{{- block.settings.heading -}}</h2>
+          </div>
+        </div>
+      </header>
+    {%- endif -%}
+
+    <div class="CollectionMain">
+      <div class="CollectionInner">
+        <div class="CollectionInner__Products">
+    {%- if the_collection.products_count > 0 -%}
+      {%- paginate the_collection.products by 24 -%}
+        <div class="ProductListWrapper">
+          <div class="ProductList ProductList--grid {% if paginate.pages > 1 %}ProductList--removeMargin{% endif %} Grid" data-mobile-count="{{ mobile_items_per_row }}" data-desktop-count="{{ desktop_items_per_row }}">
+            {%- for product in the_collection.products -%}
+              {%- if product.available or the_collection.handle contains 'custom' -%}{%- comment -%}Hide out of stock products{%- endcomment -%}
+                {%- if has_size_tag -%}
+                  {%- assign available_variants = '|' -%}
+                  {%- for variant_item in product.variants -%}
+                    {%- if variant_item.available -%}
+                      {%- assign available_variants = available_variants | append: 'size-' | append: variant_item.title | append: '|' | downcase -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                  {%- if available_variants contains size_tag -%}
+                    <div class="Grid__Cell 1/{{ mobile_items_per_row }}--phone 1/{{ tablet_items_per_row }}--tablet-and-up 1/{{ desktop_items_per_row }}--{% if block.settings.filter_position == 'drawer' %}lap-and-up{% else %}widescreen{% endif %}">
+                      {%- include 'product-item', show_product_info: true, show_vendor: true, show_color_swatch: false, show_labels: false -%}
+                    </div>
+                  {%- else -%}
+                    <!--hidden product size: {{ product.title }} -->
+                  {%- endif -%}
+                {%- else -%}
+                  <div class="Grid__Cell 1/{{ mobile_items_per_row }}--phone 1/{{ tablet_items_per_row }}--tablet-and-up 1/{{ desktop_items_per_row }}--{% if block.settings.filter_position == 'drawer' %}lap-and-up{% else %}widescreen{% endif %}">
+                    {%- include 'product-item', show_product_info: true, show_vendor: true, show_color_swatch: false, show_labels: false -%}
+                  </div>
+                {%- endif -%}
+              {%- else -%}
+                <!--hidden product: {{ product.title }} -->
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- include 'pagination' -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="EmptyState">
+        <div class="Container">
+          <h1 class="EmptyState__Title h3">{{ block.settings.no_products | default: 'No Products Found' }}</h1>
+        </div>
+      </div>
+    {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{%- endif -%}

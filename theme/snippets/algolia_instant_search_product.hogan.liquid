@@ -1,0 +1,82 @@
+<div class="Grid__Cell 1/2 1/3--tablet 1/3--lap-and-up 1/4--widescreen ais-hit ais-product ProductItem" data-algolia-index="[[ index ]]" data-algolia-position="[[ productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" data-handle="[[ handle ]]" data-variant-id="[[ objectID ]]" data-distinct="[[ _distinct ]]">
+  <div class="ProductItem__Wrapper">
+    <a
+      data-algolia-position="[[ productPosition ]]"
+      data-algolia-queryid="[[ queryID ]]"
+      data-algolia-objectid="[[ objectID ]]"
+      data-handle="[[ handle ]]"
+      data-variant-id="[[ objectID ]]"
+      data-distinct="[[ _distinct ]]"
+      href="[[# helpers.instantsearchLink ]][[/ helpers.instantsearchLink ]]"
+      class="ProductItem__ImageWrapper">
+        <div class="AspectRatio AspectRatio--withFallback" style="max-width: 1400px; padding-bottom: 146.285714286%; --aspect-ratio: 0.68359375">
+          <img class="ProductItem__Image Image--lazyLoad" src="[[# helpers.largeImage ]][[/ helpers.largeImage ]]">
+        </div>
+    </a>
+
+    <div class="ais-hit--details ProductItem__Info">
+
+      [[# helpers.badges ]][[/ helpers.badges ]]
+
+      <p class="ProductItem__Vendor Heading h4">[[ vendor ]]</p>
+      <h2 class="ais-hit--title ProductItem__Title Heading h3">
+        <a data-algolia-index="[[ index ]]" data-algolia-position="[[ productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" href="[[# helpers.instantsearchLink ]][[/ helpers.instantsearchLink ]]" onclick="void(0)" title="[[# helpers.fullTitle ]][[/ helpers.fullTitle ]]">
+          [[# helpers.fullEscapedHTMLTitle ]][[/ helpers.fullEscapedHTMLTitle ]]
+        </a>
+      </h2>
+      <div class="ProductItem__PriceList Heading">
+        <span class="ais-hit--price ProductItem__Price Price" data-money-convertible>[[# helpers.instantsearchPrice ]][[/ helpers.instantsearchPrice ]]</span>
+      </div>
+
+      [[# helpers.sizeBar ]][[/ helpers.sizeBar ]]
+      [[^ _distinct ]]
+        <form id="algolia-add-to-cart-[[ objectID ]]" style="display: none;" action="/cart/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="[[ objectID ]]" />
+        </form>
+        <p class="ais-hit--cart">
+          [[# can_order ]]
+            <span class="ais-hit--cart-button" data-form-id="algolia-add-to-cart-[[ objectID ]]">
+              [[ translations.addToCart ]]
+            </span>
+          [[/ can_order ]]
+          [[^ can_order ]]
+            <span class="ais-hit--cart-button ais-hit--cart-button__disabled">
+              [[ translations.outOfStock ]]
+            </span>
+          [[/ can_order ]]
+        </p>
+      [[/ _distinct ]]
+    </div>
+  </div>
+</div>
+{%comment%}
+<div class="Grid__Cell 1/2 1/3--tablet 1/4--lap-and-up" data-algolia-index="[[ index ]]" data-algolia-position="[[ productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" data-handle="[[ handle ]]" data-variant-id="[[ objectID ]]" data-distinct="[[ _distinct ]]">
+  <div class="ProductItem">
+    <div class="ProductItem__Wrapper">
+      <a
+        data-algolia-position="[[ productPosition ]]"
+        data-algolia-queryid="[[ queryID ]]"
+        data-algolia-objectid="[[ objectID ]]"
+        data-handle="[[ handle ]]"
+        data-variant-id="[[ objectID ]]"
+        data-distinct="[[ _distinct ]]"
+        href="[[# helpers.instantsearchLink ]][[/ helpers.instantsearchLink ]]"
+        class="ProductItem__ImageWrapper">
+        <div class="AspectRatio AspectRatio--withFallback" style="max-width: 1400px; padding-bottom: 146.285714286%; --aspect-ratio: 0.68359375">
+          <img class="ProductItem__Image" src="[[# helpers.largeImage ]][[/ helpers.largeImage ]]">
+        </div>
+        <div class="ProductItem__Info ProductItem__Info--{{ settings.product_info_alignment }}">
+          <p class="ProductItem__Vendor Heading h4">[[ vendor ]]</p>
+          <h2 class="ProductItem__Title Heading h3">
+            [[# helpers.fullHTMLTitle ]][[/ helpers.fullHTMLTitle ]]
+          </h2>
+          <div class="ProductItem__PriceList Heading">
+            <span class="ProductItem__Price Price" data-money-convertible>[[# helpers.instantsearchPrice ]][[/ helpers.instantsearchPrice ]]</span>
+          </div>
+          [[# helpers.sizeBar ]][[/ helpers.sizeBar ]]
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{%endcomment%}
